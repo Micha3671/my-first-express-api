@@ -27,20 +27,22 @@ app.get("/user", (req, res) => {
   res.json(userData);
 });
 
-app.get("/todos", (req, res) => {
-  const todos = [
-    { id: 1, task: "Einkaufen", completed: false },
-    { id: 2, task: "Staubsaugen", completed: true },
-    { id: 3, task: "mit Hund spazieren", completed: false },
-  ];
+const todos = [
+  { id: 1, task: "Einkaufen", completed: false },
+  { id: 2, task: "Staubsaugen", completed: true },
+  { id: 3, task: "mit Hund spazieren", completed: false },
+];
 
-  const formattedTodos = todos
-    .map(
-      (todo) =>
-        `- ${todo.task} (${todo.completed ? "Erledigt" : "Nicht erledigt"})`
-    )
-    .join("\n");
-  res.json({ todos: formattedTodos });
+// Get all Todos
+app.get("/todos", (req, res) => {
+  res.json({ todos });
+});
+
+// Return todo with a specific id
+app.get("/todo", (req, res) => {
+  const todoId = parseInt(req.query.todoId);
+  const todo = todos.find((item) => item.id === todoId);
+  res.json({ todo });
 });
 
 // App hört im folgenden auf den Port, welcher über die Umgebungsvariable definiert ist

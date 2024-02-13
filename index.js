@@ -1,11 +1,13 @@
 const express = require("express");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 
 // Zugriff auf Umgebungsvariablen
 const { PORT } = process.env;
 
 // Initialisierung von express
 const app = express();
+app.use(bodyParser.json());
 // Use for development
 app.use(cors());
 
@@ -43,6 +45,15 @@ app.get("/todo", (req, res) => {
   const todoId = parseInt(req.query.todoId);
   const todo = todos.find((item) => item.id === todoId);
   res.json({ todo });
+});
+
+//  ***POST REQUESTS***
+app.post("/todo", (req, res) => {
+  const newTodo = req.body;
+
+  todos.push(newTodo);
+
+  res.json({ newTodo });
 });
 
 // App hört im folgenden auf den Port, welcher über die Umgebungsvariable definiert ist

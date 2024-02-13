@@ -29,7 +29,7 @@ app.get("/user", (req, res) => {
   res.json(userData);
 });
 
-const todos = [
+let todos = [
   { id: 1, task: "Einkaufen", completed: false },
   { id: 2, task: "Staubsaugen", completed: true },
   { id: 3, task: "mit Hund spazieren", completed: false },
@@ -54,6 +54,31 @@ app.post("/todo", (req, res) => {
   todos.push(newTodo);
 
   res.json({ newTodo });
+});
+
+//  ***PUT REQUESTS***
+app.put("/todo/addTodo", (req, res) => {
+  const { todoname, todoId } = req.body.todo;
+
+  const currentTodo = todos.find((item) => item.id === todoId);
+  currentTodo.todoname = todoname;
+
+  const deletedTodos = todos.filter((item) => item.id !== todoId);
+  deletedTodos.push(currentTodo);
+
+  todos = deletedTodos;
+
+  res.json({ updatedTodo: currentTodo });
+});
+
+//  ***DELETE REQUESTS***
+app.delete("/todo", (req, res) => {
+  const { todoId } = req.body;
+
+  const deletedTodos = todos.filter((item) => item.id !== todoId);
+  deletedTodos = deletedTodos;
+
+  res.json({ deletedTodoId: todoId });
 });
 
 // App hört im folgenden auf den Port, welcher über die Umgebungsvariable definiert ist

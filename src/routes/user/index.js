@@ -24,11 +24,15 @@ const UserRouter = Router();
 UserRouter.get("/profile", (req, res) => {
   const userId = parseInt(req.query.userId);
   if (!userId) {
-    res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
+    res.status(400).send("Bad Request: Missing userId");
     return;
   }
   const userProfile = profiles.find((item) => item.id === userId);
-  res.status(StatusCodes.OK).json({ profile: userProfile });
+  if (!userProfile) {
+    res.status(404).send("Not Found: User not found");
+    return;
+  }
+  res.status(200).json({ profile: userProfile });
 });
 
 //  ***PUT REQUESTS***
@@ -36,24 +40,27 @@ UserRouter.put("/profile/update", (req, res) => {
   const { username, userId } = req.body;
 
   const currentUser = profiles.find((item) => item.id === userId);
+  if (!currentUser) {
+    res.status(404).send("Not Found: User not found");
+    return;
+  }
   currentUser.username = username;
 
-  const deletedProfiles = profiles.filter((item) => item.id !== userId);
-  deletedProfiles.push(currentUser);
-
-  profiles = deletedProfiles;
-
-  res.json({ updatedProfile: currentUser });
+  res.status(200).json({ updatedProfile: currentUser });
 });
 
 //  ***DELETE REQUESTS***
 UserRouter.delete("/profile", (req, res) => {
   const { userId } = req.body;
 
-  const deletedProfiles = profiles.filter((item) => item.id !== userId);
-  profiles = deletedProfiles;
+  const deletedProfile = profiles.find((item) => item.id === userId);
+  if (!deletedProfile) {
+    res.status(404).send("Not Found: User not found");
+    return;
+  }
 
-  res.json({ deletedUserId: userId });
+  profiles = profiles.filter((item) => item.id !== userId);
+  res.status(200).json({ deletedUserId: userId });
 });
 
 module.exports = { UserRouter };

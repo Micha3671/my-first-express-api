@@ -11,6 +11,9 @@ app.use(bodyParser.json());
 // Use for development
 app.use(cors());
 
+//http-status-codes einfügen
+const { StatusCodes, ReasonPhrases } = require("http-status-codes");
+
 app.get("/test", (req, res) => {
   res.send("Hello World!");
 });
@@ -43,7 +46,12 @@ app.get("/todos", (req, res) => {
 // Return todo with a specific id
 app.get("/todo", (req, res) => {
   const todoId = parseInt(req.query.todoId);
+  if (!todoId) {
+    res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
+    return;
+  }
   const todo = todos.find((item) => item.id === todoId);
+  res.status(StatusCodes.OK).json({ todo });
   res.json({ todo });
 });
 
